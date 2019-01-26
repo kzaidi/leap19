@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: small-deployment
+  namespace: restricted
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: small-app-deployment
+  template:
+    metadata:
+      labels:
+        app: small-app-deployment
+    spec:
+      containers:
+      - name: sleeper
+        image: busybox
+        command: [ "/bin/sh", "-c", "echo \"Sleeping for ${POD_SLEEP_SECS}...\" && date && sleep ${POD_SLEEP_SECS} && date && exit 0"]
+        env:
+          - name: POD_SLEEP_SECS
+            value: "600"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "200m"
+          limits:
+            memory: "128Mi"
+            cpu: "200m"

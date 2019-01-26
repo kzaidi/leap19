@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  namespace: accounting
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: app
+  template:
+    metadata:
+      labels:
+        name: app
+    spec:
+      serviceAccountName: application-account
+      containers:
+        - name: app
+          image: lachlanevenson/k8s-kubectl:v1.11.5
+          command: [ "/bin/sh", "-c", "kubectl get pods; sleep 15 && date && exit 0"]
+          env:
+            - name: POD_SLEEP_SECS
+              value: "600"
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "200m"
+            limits:
+              memory: "128Mi"
+              cpu: "200m"
