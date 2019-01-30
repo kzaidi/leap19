@@ -1,0 +1,31 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: app-ingress
+  namespace: ingress
+  annotations:
+    kubernetes.io/ingress.class: addon-http-application-routing
+spec:
+  rules:
+    - host: app-a.foo
+      http:
+        paths:
+          - path: /b
+            backend:
+              serviceName: app-b
+              servicePort: 8080
+          - path: /
+            backend:
+              serviceName: app-a
+              servicePort: 8080
+    - host: app-b.foo
+      http:
+        paths:
+          - path: /a
+            backend:
+              serviceName: app-a
+              servicePort: 8080
+          - path: /
+            backend:
+              serviceName: app-b
+              servicePort: 8080
