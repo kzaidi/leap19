@@ -1,58 +1,45 @@
 # Introduction
 
-This lab walks you through creating and using a Kubernetes cluster powered by Azure Kubernetes Service.
+This lab walks you through using Aqua Security Platform to scan and protect your containers.
 
 You will explore Kubernetes concepts including resource management, workload isolation, application identity, and container security.
 
 ## Lab Setup
 
-For this lab, you will need access to an Azure subscription, the Azure web portal, and Azure Cloud Shell.
+For this lab, you will need access to the Aqua Images.   They will be provided to you on the day of the lab. 
 
-## Launch Cloud Shell
+## Launch Cloud Shell or use kubectl from your developer machince
 
-[Azure Cloud Shell](https://azure.microsoft.com/en-us/features/cloud-shell/) is a browser-based CLI tool integrated directly into the Azure portal. Cloud shell provides all of the tools you need to manage your Azure resources in a pre-configured, on-demand virtual machine.
+Make sure you have access to cloud shell or have kubeclt access from your developer machine
 
-Navigate to the [Azure Cloud Shell https://shell.azure.com](https://shell.azure.com) and login if needed. You may also click the Cloud Shell Icon from the Azure Portal:
-
-![Launch Cloud Shell](https://docs.microsoft.com/en-us/azure/cloud-shell/media/overview/overview-bash-pic.png)
-
-On first launch, Cloud Shell prompts to create a resource group, storage account, and Azure Files share on your behalf. This is a one-time step and will be automatically attached for all sessions. A single file share can be used by both Bash and PowerShell in Cloud Shell.
 
 ## Checkout the lab material
 
-Next, grab a copy of the materials for the rest of this lab by cloning the lab repository from GitHub to your Cloud Shell instance:
+Next, grab a copy of the materials for this lab by cloning the lab repository from GitHub to your Cloud Shell instance:
+
+You can clone the helm char from here:
+https://github.com/aquasecurity/aqua-helm
 
 ```console
-git clone https://github.com/slack/leap19.git
-cd leap19
+git clone https://github.com/aquasecurity/aqua-helm
+
 ```
 
-## Register Providers
+## Prerequisites
 
-Provider registration ensures that your subscription has the necessary Azure services activated on your account. Type the following commands into the Cloud Shell:
+### Container Registry Credentials
 
-```console
-az provider register -n Microsoft.ContainerService -o table
+The Aqua server (Console and Gateway) components are available in our private repository, which requires authentication. By default, the charts create a secret based on the values.yaml. 
+
+First, create a new namespace named "aqua":
+
+```bash
+kubectl create namespace aqua
 ```
 
-`watch` will run your command every second and display the output. When the RegistrationState is Registered, CTRL+C to continue with the lab.
+Next, **(Optional)** create the secret:
 
-**Output:**
-```
-Registering is still on-going. You can monitor using 'az provider show -n Microsoft.ContainerService'
-```
-
-Verify that the provider has been registered by showing your provider:
-
-```console
-watch az provider show -n Microsoft.ContainerService -o table
+```bash
+kubectl create secret docker-registry csp-registry-secret  --docker-server="registry.aquasec.com" --namespace aqua --docker-username="jg@example.com" --docker-password="Truckin" --docker-email="jg@example.com"
 ```
 
-**Output:**
-```
-Namespace                   RegistrationState
---------------------------  -------------------
-Microsoft.ContainerService  Registered
-```
-
-Great! You are ready to [create your first AKS cluster](lab/01-create-cluster.md).
